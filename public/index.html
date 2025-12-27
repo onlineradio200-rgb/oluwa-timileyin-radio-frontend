@@ -1,47 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oluwa Timileyin Radio</title>
+  <meta charset="UTF-8" />
+  <title>Oluwa-Timileyin Radio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Style -->
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <h1>Oluwa Timileyin Radio</h1>
-  <audio id="radioPlayer" controls autoplay></audio>
-  <br>
-  <button id="musicBtn">Play Music</button>
-  <button id="liveBtn">Go Live</button>
 
-  <script>
-    const player = document.getElementById("radioPlayer");
+  <div class="radio-container">
 
-    async function playMusic() {
-      const res = await fetch("https://oluwa-timileyin-radio-backend-jgwk.onrender.com/music/list");
-      const list = await res.json();
-      let i = 0;
-      if(list.length === 0) return alert("No music uploaded yet!");
-      player.src = list[i].url;
-      player.play();
+    <h1 class="radio-title">Oluwa-Timileyin Radio</h1>
 
-      player.onended = () => {
-        i = (i + 1) % list.length;
-        player.src = list[i].url;
-        player.play();
-      };
-    }
+    <p id="status" class="radio-status">
+      Connecting to live broadcast…
+    </p>
 
-    async function playLive() {
-      const res = await fetch("https://oluwa-timileyin-radio-backend-jgwk.onrender.com/live");
-      const live = await res.json();
-      player.src = live.url;
-      player.play();
-    }
+    <!-- Hidden Audio Player -->
+    <audio id="radioPlayer" preload="auto"></audio>
 
-    document.getElementById("musicBtn").onclick = playMusic;
-    document.getElementById("liveBtn").onclick = playLive;
+    <div class="radio-controls">
+      <button id="playBtn">▶ Play Radio</button>
+      <button id="liveBtn">🎙 Live</button>
+    </div>
 
-    // Start music automatically
-    playMusic();
-  </script>
+    <div class="radio-footer">
+      <span>🔴 Broadcasting 24/7</span>
+    </div>
+
+  </div>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+
 </body>
-</html>
+  </html>
