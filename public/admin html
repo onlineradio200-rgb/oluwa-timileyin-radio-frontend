@@ -6,39 +6,39 @@
 </head>
 <body>
 
-<h2>Oluwa-Timileyin Radio – Admin Upload</h2>
+<h2>Oluwa-Timileyin Radio – Admin</h2>
 
-<input type="file" id="audioFile" accept="audio/*">
+<input type="file" id="file" accept="audio/*">
 <br><br>
 <button onclick="upload()">Upload Audio</button>
 
-<p id="msg"></p>
+<p id="status"></p>
 
 <script>
-const BACKEND = "https://oluwa-timileyin-radio-backend-jgwk.onrender.com";
+const API = "https://oluwa-timileyin-radio-backend-jgwk.onrender.com";
 
 function upload() {
-  const fileInput = document.getElementById("audioFile");
-  const msg = document.getElementById("msg");
+  const fileInput = document.getElementById("file");
+  const status = document.getElementById("status");
 
   if (!fileInput.files.length) {
-    msg.innerText = "Please select an audio file";
+    status.innerText = "Select an audio file first";
     return;
   }
 
   const formData = new FormData();
   formData.append("audio", fileInput.files[0]);
 
-  fetch(BACKEND + "/admin/upload", {
+  fetch(API + "/admin/upload", {
     method: "POST",
     body: formData
   })
   .then(res => res.json())
-  .then(data => {
-    msg.innerText = "Upload successful ✔";
+  .then(() => {
+    status.innerText = "Upload successful ✅";
   })
-  .catch(err => {
-    msg.innerText = "Upload failed ❌";
+  .catch(() => {
+    status.innerText = "Upload failed ❌";
   });
 }
 </script>
