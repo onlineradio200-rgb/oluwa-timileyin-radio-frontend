@@ -1,54 +1,92 @@
-const BACKEND = "https://oluwa-timileyin-radio-backend-jgwk.onrender.com";
+// ===============================
+// CONFIG
+// ===============================
+const BACKEND_URL = "https://oluwa-timileyin-radio-backend-jgwk.onrender.com";
 
-const player = document.getElementById("radioPlayer");
+// ===============================
+// ELEMENTS
+// ===============================
+const audio = document.getElementById("radioPlayer");
 const statusText = document.getElementById("status");
+const playBtn = document.getElementById("playBtn");
+const liveBtn = document.getElementById("liveBtn");
 
-// ================= MUSIC RADIO =================
-async function playMusic() {
-  statusText.innerText = "Mode: Music Radio";
+let playlist = [];
+let currentIndex = 0;
+let radioMode = "auto"; // auto | live
 
-  const res = await fetch(BACKEND + "/music/list");
-  const files = await res.json();
-
-  if (!files || files.length === 0) {
-    alert("No music uploaded yet");
-    return;
-  }
-
-  let index = 0;
-  player.src = BACKEND + files[index];
-  player.play();
-
-  // Auto-play next song (continuous radio)
-  player.onended = () => {
-    index = (index + 1) % files.length;
-    player.src = BACKEND + files[index];
-    player.play();
-  };
-}
-
-// ================= LIVE MIC (BROWSER MIC) =================
-async function playLiveMic() {
-  statusText.innerText = "Mode: Live Mic";
-
+// ===============================
+// FETCH MUSIC LIST
+// ===============================
+async function loadRadioMusic() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    player.srcObject = stream;
-    player.play();
+    statusText.innerText = "Loading radio…";
+
+    const res = await fetch(`${BACKEND_URL}/music/list`);
+    playlist = await res.json();
+
+    if (!playlist || playlist.length === 0) {
+      statusText.innerText = "No broadcast available";
+      return;
+    }
+
+    currentIndex = 0;
+    playCurrent();
   } catch (err) {
-    alert("Microphone access denied");
+    console.error(err);
+    statusText.innerText = "Radio offline";
   }
 }
 
-// ================= STOP =================
-function stopRadio() {
-  statusText.innerText = "Stopped";
+// ===============================
+// PLAY CURRENT TRACK
+// ===============================
+function playCurrent() {
+  if (playlist.length === 0) return;
 
-  if (player.srcObject) {
-    player.srcObject.getTracks().forEach(track => track.stop());
-    player.srcObject = null;
+  audio.src = BACKEND_URL + playlist[currentIndex];
+  audio.play();
+
+  statusText.innerText = "🔴 Oluwa-Timileyin Radio — Live Broadcast";
+}
+
+// ===============================
+// AUTO CONTINUE (RADIO STYLE)
+// ===============================
+audio.addEventListener("ended", () => {
+  if (radioMode !== "auto") return;
+
+  currentIndex++;
+  if (currentIndex >= playlist.length) {
+    currentIndex = 0; // loop like real radio
   }
+  playCurrent();
+});
 
-  player.pause();
-  player.src = "";
-      }
+// ===============================
+// PLAY BUTTON
+// ===============================
+playBtn.addEventListener("click", () => {
+  radioMode = "auto";
+  audio.play();
+  statusText.innerText = "🔴 Oluwa-Timileyin Radio — Live Broadcast";
+});
+
+// ===============================
+// LIVE MODE (MIC / STREAM LATER)
+// ===============================
+liveBtn.addEventListener("click", () => {
+  radioMode = "live";
+
+  audio.pause();
+  audio.src = ""; // placeholder for real stream later
+
+  statusText.innerText = "🎙️ Live session (coming soon)";
+});
+
+// ===============================
+// AUTOSTART
+// ===============================
+window.addEventListener("load", () => {
+  loadRadioMusic();
+});
