@@ -5,36 +5,41 @@
   <title>Oluwa-Timileyin Radio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Style -->
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #000000, #1a1a1a);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: gold;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .radio-box {
+      padding: 25px;
+      border: 1px solid gold;
+      border-radius: 15px;
+      background: rgba(0,0,0,0.6);
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    audio {
+      width: 100%;
+    }
+  </style>
 </head>
 
 <body>
-
-  <div class="radio-container">
-
-    <h1 class="radio-title">Oluwa-Timileyin Radio</h1>
-
-    <p id="status" class="radio-status">
-      Connecting to live broadcast…
-    </p>
-
-    <!-- Hidden Audio Player -->
-    <audio id="radioPlayer" preload="auto"></audio>
-
-    <div class="radio-controls">
-      <button id="playBtn">▶ Play Radio</button>
-      <button id="liveBtn">🎙 Live</button>
-    </div>
-
-    <div class="radio-footer">
-      <span>🔴 Broadcasting 24/7</span>
-    </div>
-
+  <div class="radio-box">
+    <h1>📻 Oluwa-Timileyin Radio</h1>
+    <p>Live Gospel | Word | Worship</p>
+    <audio id="radioPlayer" controls autoplay></audio>
+    <p id="status">Loading stream…</p>
   </div>
 
-  <!-- Script -->
   <script src="script.js"></script>
-
 </body>
-  </html>
+</html>
