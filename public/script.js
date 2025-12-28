@@ -1,39 +1,50 @@
-const BACKEND_URL =
-  "https://oluwa-timileyin-radio-backend-jgwk.onrender.com";
-
-const player = document.getElementById("radioPlayer");
-const statusText = document.getElementById("status");
-
+const BACKEND_URL = "https://oluwa-timileyin-radio-backend-jgwk.onrender.com";
 let playlist = [];
 let currentIndex = 0;
 
+const player = document.getElementById("player");
+const statusText = document.getElementById("status");
+let liveStream = false;
+
+// Fetch playlist
+async function loadPlaylist() {
+  const res = await fetch(`${BACKEND_URL}/music/list`);
+  playlist = await res.json();
+  playNext();
+}
+
+// Play next audio in playlist
 function playNext() {
-  if (playlist.length === 0) {
-    statusText.textContent = "No broadcast available now";
+  if (liveStream) return; // Live mic overrides music
+
+  if (!playlist || playlist.length === 0) {
+    statusText.textContent = "No audio available";
     return;
   }
 
   player.src = BACKEND_URL + playlist[currentIndex];
   player.play();
-
-  statusText.textContent = "🔴 Broadcasting Live";
+  statusText.textContent = `Playing: ${playlist[currentIndex]}`;
 
   currentIndex++;
-  if (currentIndex >= playlist.length) {
-    currentIndex = 0; // loop like radio
-  }
+  if (currentIndex >= playlist.length) currentIndex = 0;
 }
 
-// Load playlist
-fetch(`${BACKEND_URL}/music/list`)
-  .then(res => res.json())
-  .then(list => {
-    playlist = list;
-    playNext();
-  })
-  .catch(() => {
-    statusText.textContent = "Connection error";
-  });
-
-// When one audio ends → play next
+// Auto play next track when current ends
 player.addEventListener("ended", playNext);
+
+// Start everything
+window.onload = loadPlaylist;
+
+// ----- LIVE MIC OVERRIDE -----
+function startLiveMic() {
+  liveStream = true;
+  player.pause();
+  statusText.textContent = "🔴 Live Broadcast (Mic)";
+}
+
+function stopLiveMic() {
+  liveStream = false;
+  statusText.textContent = "Resuming playlist...";
+  playNext();
+      }
