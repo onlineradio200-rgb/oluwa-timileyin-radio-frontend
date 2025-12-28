@@ -1,45 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Oluwa-Timileyin Radio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="UTF-8">
+  <title>Oluwa Timileyin Radio</title>
   <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #000000, #1a1a1a);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: gold;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    .radio-box {
-      padding: 25px;
-      border: 1px solid gold;
-      border-radius: 15px;
-      background: rgba(0,0,0,0.6);
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    audio {
-      width: 100%;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; padding: 30px; background: #f2f2f2; }
+    h1 { color: #333; }
+    audio { width: 80%; margin-top: 20px; }
+    #status { margin-top: 10px; font-weight: bold; color: #555; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
   </style>
 </head>
-
 <body>
-  <div class="radio-box">
-    <h1>📻 Oluwa-Timileyin Radio</h1>
-    <p>Live Gospel | Word | Worship</p>
-    <audio id="radioPlayer" controls autoplay></audio>
-    <p id="status">Loading stream…</p>
+  <h1>🎧 Oluwa Timileyin Radio</h1>
+
+  <!-- Audio player -->
+  <audio id="player" controls autoplay></audio>
+  <div id="status">Loading playlist...</div>
+
+  <hr />
+
+  <!-- Optional live mic control for user (view-only) -->
+  <div>
+    <strong>Live Broadcast:</strong> <span id="liveStatus">Offline</span>
   </div>
 
+  <!-- Include the frontend script -->
   <script src="script.js"></script>
+
+  <script>
+    // Optional: live status display
+    const liveStatus = document.getElementById("liveStatus");
+
+    // Check live mic status every 5s
+    setInterval(async () => {
+      try {
+        const res = await fetch("https://oluwa-timileyin-radio-backend-jgwk.onrender.com/music/list");
+        const list = await res.json();
+
+        if(list.length > 0){
+          liveStatus.textContent = "Online (Music available)";
+        } else {
+          liveStatus.textContent = "Offline";
+        }
+      } catch (err) {
+        liveStatus.textContent = "Offline";
+      }
+    }, 5000);
+  </script>
 </body>
-</html>
+  </html>
