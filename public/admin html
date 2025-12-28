@@ -1,47 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <title>Radio Admin Upload</title>
 </head>
 <body>
+  <h2>Upload Audio</h2>
 
-<h2>Oluwa-Timileyin Radio – Admin</h2>
+  <form id="uploadForm">
+    <input type="file" name="audio" accept="audio/*" required />
+    <button type="submit">Upload</button>
+  </form>
 
-<input type="file" id="file" accept="audio/*">
-<br><br>
-<button onclick="upload()">Upload Audio</button>
+  <pre id="result"></pre>
 
-<p id="status"></p>
+  <script>
+    document.getElementById("uploadForm").onsubmit = async (e) => {
+      e.preventDefault();
 
-<script>
-const API = "https://oluwa-timileyin-radio-backend-jgwk.onrender.com";
+      const formData = new FormData(e.target);
 
-function upload() {
-  const fileInput = document.getElementById("file");
-  const status = document.getElementById("status");
+      const res = await fetch("/music/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-  if (!fileInput.files.length) {
-    status.innerText = "Select an audio file first";
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("audio", fileInput.files[0]);
-
-  fetch(API + "/admin/upload", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(() => {
-    status.innerText = "Upload successful ✅";
-  })
-  .catch(() => {
-    status.innerText = "Upload failed ❌";
-  });
-}
-</script>
-
+      const data = await res.json();
+      document.getElementById("result").textContent =
+        JSON.stringify(data, null, 2);
+    };
+  </script>
 </body>
 </html>
